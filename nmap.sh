@@ -4,7 +4,8 @@ while true; do
     echo "Menu principal"
     echo "1. Choix de type de scan nmap"
     echo "2. Scan avancé (détection OS et services)"
-    echo "3. Quitter"
+    echo "3. Automatiser un scan régulier avec cron"
+    echo "4. Quitter"
     read -p "Votre choix: " choix
 
     case $choix in 
@@ -12,23 +13,33 @@ while true; do
         while true; do
             clear
             echo "1. Scan rapide"
-            echo "2. Scan complet"
+            echo "2. Scan complet (TCP et UDP)"
             echo "3. Scan personnalisé"
             echo "4. Retour au menu principal"
-            read -p "Votre choix: " choix2
+            read -p "Votre choix (ou 'r' pour revenir au menu principal): " choix2
+            if [[ $choix2 == "r" ]]; then
+                break
+            fi
             case $choix2 in
             1)
-                read -p "Entrez l'adresse IP ou le nom de domaine: " ip
+                read -p "Entrez l'adresse IP, plage d'IP ou plusieurs hôtes (ex : 192.168.1.1, 192.168.1.2 ou 192.168.1.1-192.168.1.50) : " ip
                 nmap -F $ip
                 read -p "Appuyez sur une touche pour continuer..."
                 ;;
             2)
-                read -p "Entrez l'adresse IP ou le nom de domaine: " ip
-                nmap -p 1-65535 $ip
+                read -p "Entrez l'adresse IP, plage d'IP ou plusieurs hôtes (ex : 192.168.1.1, 192.168.1.2 ou 192.168.1.1-192.168.1.50) : " ip
+                echo "1. Scan complet TCP"
+                echo "2. Scan complet UDP"
+                read -p "Votre choix: " tcp_udp
+                if [ $tcp_udp -eq 1 ]; then
+                    nmap -p 1-65535 $ip
+                else
+                    nmap -sU -p 1-65535 $ip
+                fi
                 read -p "Appuyez sur une touche pour continuer..."
                 ;;
             3)
-                read -p "Entrez l'adresse IP ou le nom de domaine: " ip
+                read -p "Entrez l'adresse IP, plage d'IP ou plusieurs hôtes (ex : 192.168.1.1, 192.168.1.2 ou 192.168.1.1-192.168.1.50) : " ip
                 read -p "Entrez un ou plusieurs ports ou plages de ports à scanner: " ports
                 nmap -p $ports $ip
                 read -p "Appuyez sur une touche pour continuer..."
@@ -79,6 +90,24 @@ while true; do
         done
         ;;
     3)
+        clear
+        echo "Automatisation du scan avec cron"
+        read -p "Entrez l'adresse IP, plage d'IP ou plusieurs hôtes à scanner régulièrement (ex : 192.168.1.1, 192.168.1.2 ou 192.168.1.1-192.168.1.50) : " ip
+        read -p "Entrez l'intervalle en minutes entre les scans: " intervalle
+        echo "Exemples pour automatiser vos scans avec cron :"
+        echo "1. Scan quotidien"
+        echo "2. Scan hebdomadaire"
+        read -p "Votre choix: " freq
+        if [[ $freq -eq 1 ]]; then
+            (crontab -l; echo "0 0 * * * nmap -F $ip > scan_report_$(date +\%Y\%m\%d).txt") | crontab -
+            echo "Scan quotidien planifié."
+        else
+            (crontab -l; echo "0 0 * * 0 nmap -F $ip > scan_report_$(date +\%Y\%m\%d).txt") | crontab -
+            echo "Scan hebdomadaire planifié."
+        fi
+        read -p "Appuyez sur une touche pour revenir au menu principal..."
+        ;;
+    4)
         echo "Quitter."
         exit 0
         ;;
