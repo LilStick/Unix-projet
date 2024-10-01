@@ -6,7 +6,7 @@ Ce script permet de réaliser différents types de scans réseau en utilisant Nm
 
     1.	Choix de type de scan Nmap
     •	Scan rapide : Effectue un scan rapide des ports courants.
-    •	Scan complet : Scanne tous les ports TCP ou UDP.
+    •	Scan complet : Scanne tous les ports.
     •	Scan personnalisé : Permet de spécifier des ports à scanner.
     •	Option pour revenir au menu principal à tout moment.
     2.	Scan avancé
