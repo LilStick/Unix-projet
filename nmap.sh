@@ -1,5 +1,6 @@
 #!/bin/bash
 while true; do 
+    # Affichage du menu principal
     clear  
     echo "Menu principal"
     echo "1. Choix de type de scan nmap"
@@ -10,36 +11,30 @@ while true; do
 
     case $choix in 
     1)
+        # Si choix 1, choisir entre les sous choix 
         while true; do
             clear
             echo "1. Scan rapide"
-            echo "2. Scan complet (TCP et UDP)"
+            echo "2. Scan complet"
             echo "3. Scan personnalisé"
             echo "4. Retour au menu principal"
             read -p "Votre choix (ou 'r' pour revenir au menu principal): " choix2
-            if [[ $choix2 == "r" ]]; then
+            if [[ $choix2 == "r" ]]; then 
                 break
             fi
             case $choix2 in
             1)
-                read -p "Entrez l'adresse IP, plage d'IP ou plusieurs hôtes (ex : 192.168.1.1, 192.168.1.2 ou 192.168.1.1-192.168.1.50) : " ip
+                read -p "Entrez l'adresse IP ou le nom de domaine: " ip
                 nmap -F $ip
                 read -p "Appuyez sur une touche pour continuer..."
                 ;;
             2)
-                read -p "Entrez l'adresse IP, plage d'IP ou plusieurs hôtes (ex : 192.168.1.1, 192.168.1.2 ou 192.168.1.1-192.168.1.50) : " ip
-                echo "1. Scan complet TCP"
-                echo "2. Scan complet UDP"
-                read -p "Votre choix: " tcp_udp
-                if [ $tcp_udp -eq 1 ]; then
-                    nmap -p 1-65535 $ip
-                else
-                    nmap -sU -p 1-65535 $ip
-                fi
+                read -p "Entrez l'adresse IP ou le nom de domaine: " ip
+                nmap -p 1-65535 $ip
                 read -p "Appuyez sur une touche pour continuer..."
                 ;;
             3)
-                read -p "Entrez l'adresse IP, plage d'IP ou plusieurs hôtes (ex : 192.168.1.1, 192.168.1.2 ou 192.168.1.1-192.168.1.50) : " ip
+                read -p "Entrez l'adresse IP ou le nom de domaine: " ip
                 read -p "Entrez un ou plusieurs ports ou plages de ports à scanner: " ports
                 nmap -p $ports $ip
                 read -p "Appuyez sur une touche pour continuer..."
